@@ -1,0 +1,37 @@
+import java.util.Scanner;
+
+
+
+
+
+
+/**
+ * App
+ */
+public class App {
+
+    public static void main(String[] args) {
+         Scanner his=new Scanner(System.in);
+         System.out.println("Um certo dia três amigos resoveram fazer uma trilha pela floresta,chegando lá eles avistaram um casa abandonada");     
+         System.out.println("O que eles tem que fazer?: 1 ir até a casa ou 2 passar direto");
+         String resp= his.nextLine();
+         if (resp.equals("1")){ 
+           System.out.println("Chegando na casa abandonada ,eles entram e encontram um livro chamado ,os 7 espirito amaldiçoado java.");
+           System.out.println("1 :Eles pegam o livro e ler ?ou 2 :Deixam o livro queto ?");
+           String reesp=his.nextLine();  
+           if (reesp.equals("1")){
+           System.out.println("E assim que eles acabam de ler o livro ,sete espito amaldiçoado desperta para atormentar a vida daqueles ");
+           System.out.println("que acordaram eles de seu sono profundo.");
+           System.out.println("Agora a missão dos três amigos é encontrar uma forma de fazer com que os 7 espiro voltem para o seu sono profundo,caso não ");
+           System.out.println("eles vão ser atormentado até morre.");
+           }else{
+            System.out.println("E deixando o livro quieto eles se livra do tormento de 7 espirito amldiçoado.");
+           }
+         }else{ 
+          System.out.println(" E assim foi mais um dia normal na vida deles!");
+         }
+         his.close();
+    }
+
+
+}

@@ -1,0 +1,347 @@
+CLASS CAPITULOIMAGEM:
+_____________________________________________________________________________________________________________
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class CapituloImagem extends Capitulo {
+
+  private String imagem;
+
+  public CapituloImagem(HashMap<String, CaracteristicaPersonagem> personagens, Scanner escanear,
+      Scanner escaneadordirecaocapitulos) {
+
+    this.leitorCapitulos(personagens, escanear, escaneadordirecaocapitulos);
+    this.escolhas = new ArrayList<Escolha>();
+
+    }
+
+    @Override
+   public void mostra() {
+      System.out.println();
+      System.out.println(imagem);
+      System.out.println();
+      super.mostra();
+}
+
+@Override
+protected void leitorCapitulos(HashMap<String, CaracteristicaPersonagem> personagens, Scanner escanear,
+  Scanner escaneadordirecaocapitulos) {
+  String le = escaneadordirecaocapitulos.nextLine();
+  le = escaneadordirecaocapitulos.nextLine();
+  this.imagem = le;
+  le = escaneadordirecaocapitulos.nextLine();
+
+  while (!le.equals("FIM"))
+         {
+
+           this.imagem = this.imagem + "\n" + le;
+           le = escaneadordirecaocapitulos.nextLine();
+
+   }
+   super.leitorCapitulos(personagens, escanear, escaneadordirecaocapitulos);
+
+}
+
+
+}
+________________________________________________________________________________________________________________________
+CLASS CAPITULO:
+_________________________________________________________________________________________________________________________
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class Capitulo {
+
+  private CaracteristicaPersonagem personagem;
+  private int novaenergia;
+  private String nome;
+  private String texto;
+  protected ArrayList<Escolha> escolhas;
+  private Scanner his;
+
+  protected Capitulo() {
+  }
+
+  public Capitulo(
+      String nome,
+      String texto,
+      CaracteristicaPersonagem personagem,
+      int novaenergia,
+      Scanner his) {
+
+    this.personagem = personagem;
+    this.novaenergia = novaenergia;
+    this.nome = nome;
+    this.texto = texto;
+    this.his = his;
+    this.escolhas = new ArrayList<Escolha>();
+  }
+
+  public Capitulo(HashMap<String, CaracteristicaPersonagem> personagens, Scanner escanear,
+      Scanner escaneadordirecaocapitulos) {
+    this.leitorCapitulos(personagens, escanear, escaneadordirecaocapitulos);
+    this.escolhas = new ArrayList<Escolha>();
+
+  }
+
+  /**
+   *
+   * Método que exibe as informações do objeto atual, incluindo o nome, texto,
+   * energia e opções disponíveis.
+   * O método chama o método "escolher" para permitir que o usuário selecione uma
+   * opção e, em seguida,
+   * chama recursivamente o método "mostra" do próximo objeto correspondente à
+   * escolha feita pelo usuário.
+   * Se a energia do personagem chegar a zero, o método exibe uma mensagem
+   * informando que o personagem
+   * morreu.
+   */
+
+  public void mostra() {
+
+    System.out.println(this.nome);
+    System.out.println("________________________________");
+    System.out.println(this.texto);
+    this.personagem.atualizarEnergia(this.novaenergia);
+    System.out.println("_________________________________");
+    if (this.escolhas.size() > 0) {
+      for (Escolha escolha : escolhas) {
+
+        System.out.println(escolha.getTexto());
+      }
+
+      System.out.println("________________________________");
+
+      int nescolha = escolher();
+      this.escolhas.get(nescolha).getProximo().mostra();
+
+    }
+
+  }
+
+  /*
+   * 
+   * Método que lê a entrada do usuário e retorna o índice da escolha selecionada.
+   * O método percorre a lista de escolhas e verifica se a resposta do usuário
+   * corresponde a uma das opções.
+   * Se houver correspondência, o método retorna o índice da escolha
+   * correspondente. Caso contrário, o loop é
+   * repetido até que uma escolha válida seja feita.
+   */
+  private int escolher() {
+
+    int escolha = -1;
+
+    if (escolhas != null) {
+
+      while (escolha == -1) {
+        String resposta = his.nextLine();
+        for (int i = 0; i < escolhas.size(); i++) {
+
+          if (resposta.equals(escolhas.get(i).getTexto())) {
+            escolha = i;
+          }
+        }
+
+      }
+
+    }
+    return escolha;
+  }
+
+  protected void leitorCapitulos(HashMap<String, CaracteristicaPersonagem> personagens,
+      Scanner escanear,
+      Scanner escaneadordirecaocapitulos) {
+    String le;
+
+    this.his = escanear;
+    le = escaneadordirecaocapitulos.nextLine();
+    this.nome = escaneadordirecaocapitulos.nextLine();
+    le = escaneadordirecaocapitulos.nextLine();
+    this.texto = escaneadordirecaocapitulos.nextLine();
+    le = escaneadordirecaocapitulos.nextLine();
+    this.personagem = personagens.get(escaneadordirecaocapitulos.nextLine());
+    le = escaneadordirecaocapitulos.nextLine();
+    this.novaenergia = Integer.parseInt(escaneadordirecaocapitulos.nextLine());
+
+  }
+
+  public ArrayList<Escolha> getEscolhas() {
+    return escolhas;
+  }
+
+  public void setEscolhas(ArrayList<Escolha> escolhas) {
+    this.escolhas = escolhas;
+  }
+
+  public String getNome() {
+    return this.nome;
+
+  }
+
+}
+______________________________________________________________________________________________________________________________________________________________
+CLASS LEITOR
+_______________________________________________________________________________________________________________________________________________________________
+
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class Leitor {
+
+  HashMap<String, CaracteristicaPersonagem> ldPersonagens(String direcaoarquivo) {
+
+    HashMap<String, CaracteristicaPersonagem> personagens = new HashMap<String, 
+    CaracteristicaPersonagem>();
+    File ddPersonagens = new File(direcaoarquivo);
+
+    try {
+      Scanner escaneadordirecaoarquivo = new Scanner(ddPersonagens, "UTF-8");
+
+      String nomeCaracteristica = "";
+      String le = "";
+      int energiaCaracteristica = 0;
+
+      while (escaneadordirecaoarquivo.hasNextLine()) {
+        while (!le.equals("PERSONAGEMHT")) {
+
+          le = escaneadordirecaoarquivo.nextLine();
+
+        }
+        le = escaneadordirecaoarquivo.nextLine();
+        nomeCaracteristica = escaneadordirecaoarquivo.nextLine();
+        le = escaneadordirecaoarquivo.nextLine();
+        energiaCaracteristica = Integer.parseInt(escaneadordirecaoarquivo.nextLine());
+        personagens.put(nomeCaracteristica, new CaracteristicaPersonagem(nomeCaracteristica,
+            energiaCaracteristica));
+
+      }
+
+      escaneadordirecaoarquivo.close();
+
+    } catch (FileNotFoundException exception) {
+
+      exception.printStackTrace();
+    }
+
+    return personagens;
+  }
+
+  HashMap<String, Capitulo> ldcapitulos(String direcaoarquivocapitulo,
+      HashMap<String, CaracteristicaPersonagem> personagens, Scanner escanear) {
+    HashMap<String, Capitulo> capitulos = new HashMap<String, Capitulo>();
+    File ddcapitulos = new File(direcaoarquivocapitulo);
+
+    try {
+      Scanner escaneadordirecaocapitulos = new Scanner(ddcapitulos, "UTF-8");
+
+      String le = "";
+
+      while (escaneadordirecaocapitulos.hasNextLine()) {
+        while (!le.equals("CAPITULOS-COM-IMAGEM") &&
+            !le.equals("CAPITULOS") &&
+            !le.equals("ESCOLHAS")) {
+          le = escaneadordirecaocapitulos.nextLine();
+        }
+
+        if (le.equals("CAPITULOS-COM-IMAGEM")) {
+          CapituloImagem capitulo = new CapituloImagem(personagens,
+              escanear,
+              escaneadordirecaocapitulos);
+          capitulos.put(capitulo.getNome(), capitulo);
+
+          le = "";
+        }
+
+        if (le.equals("CAPITULOS")) {
+          Capitulo capitulo = new Capitulo(personagens, escanear, escaneadordirecaocapitulos);
+
+          capitulos.put(capitulo.getNome(), capitulo);
+
+          le = "";
+
+        } else if (le.equals("ESCOLHAS")) {
+          leitorEscolhas(capitulos, escaneadordirecaocapitulos);
+          le = "";
+
+        }
+
+      }
+
+      escaneadordirecaocapitulos.close();
+
+    } catch (FileNotFoundException exception) {
+
+      exception.printStackTrace();
+    }
+
+    return capitulos;
+
+  }
+
+  private String leitorEscolhas(HashMap<String,Capitulo>capitulos,Scanner escaneadordirecaocapitulos){
+    String nomeCapitulosaida;
+    String textoescolha;
+    String nomeCapitulochegada;
+    String le;
+    le = escaneadordirecaocapitulos.nextLine();
+    nomeCapitulosaida = escaneadordirecaocapitulos.nextLine();
+    le = escaneadordirecaocapitulos.nextLine();
+    textoescolha = escaneadordirecaocapitulos.nextLine();
+    le = escaneadordirecaocapitulos.nextLine();
+    nomeCapitulochegada = escaneadordirecaocapitulos.nextLine();
+    if (capitulos.containsKey(nomeCapitulosaida)) {
+      capitulos.get(nomeCapitulosaida).getEscolhas().add(new Escolha(textoescolha,
+          capitulos.get(nomeCapitulochegada)));
+    }
+
+    return le;
+
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
